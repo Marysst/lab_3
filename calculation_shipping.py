@@ -1,79 +1,45 @@
 import abc
 
 class ShippingMethod(metaclass=abc.ABCMeta):
-    @abc.abstractmethod
-    def calculate_cost(self):
-        pass
+    def __init__(self, width, length, height, weight, distance, shipping_type):
+        self.width = width
+        self.length = length
+        self.height = height
+        self.weight = weight
+        self.distance = distance
+        self.shipping_type = shipping_type
 
-    @abc.abstractmethod
+    def calculate_cost(self):
+        ratio = 2 if self.shipping_type == 'fast' else 1
+        return (self.distance * self.cost_per_kilometer + self.weight * self.cost_per_kilogram + self.width * self.length * self.height * self.cost_per_cubic_meter) * ratio
+
     def calculate_time(self):
-        pass
+        ratio = 0.5 if self.shipping_type == 'fast' else 1
+        return self.distance / self.speed * ratio
 
 class GroundShipping(ShippingMethod):
     def __init__(self, width, length, height, weight, distance, shipping_type):
-        self.width = width
-        self.length = length
-        self.height = height
-        self.weight = weight
-        self.distance = distance
-        self.shipping_type = shipping_type
-
-    def calculate_cost(self):
-        cost_per_kilometer = 0.1
-        cost_per_kilogram = 1.5
-        cost_per_cubic_meter = 0.5
-        ratio = 2 if self.shipping_type == 'fast' else 1
-        return (self.distance * cost_per_kilometer + self.weight * cost_per_kilogram + self.width * self.length * self.height * cost_per_cubic_meter) * ratio
-
-    def calculate_time(self):
-        ratio = 0.5 if self.shipping_type == 'fast' else 1
-        # Швидкість руху км/год
-        speed = 120
-        return (self.distance / speed) * ratio
+        super().__init__(width, length, height, weight, distance, shipping_type)
+        self.speed = 120
+        self.cost_per_kilometer = 0.1
+        self.cost_per_kilogram = 1.5
+        self.cost_per_cubic_meter = 0.5
 
 class AirShipping(ShippingMethod):
     def __init__(self, width, length, height, weight, distance, shipping_type):
-        self.width = width
-        self.length = length
-        self.height = height
-        self.weight = weight
-        self.distance = distance
-        self.shipping_type = shipping_type
-
-    def calculate_cost(self):
-        cost_per_kilometer = 1.0
-        cost_per_kilogram = 5
-        cost_per_cubic_meter = 1.0
-        ratio = 2 if self.shipping_type == 'fast' else 1
-        return (self.distance * cost_per_kilometer + self.weight * cost_per_kilogram + self.width * self.length * self.height * cost_per_cubic_meter) * ratio
-
-    def calculate_time(self):
-        ratio = 0.5 if self.shipping_type == 'fast' else 1
-        # Швидкість руху км/год
-        speed = 800
-        return (self.distance / speed) * ratio
+        super().__init__(width, length, height, weight, distance, shipping_type)
+        self.speed = 800
+        self.cost_per_kilometer = 1.0
+        self.cost_per_kilogram = 5
+        self.cost_per_cubic_meter = 1.0
 
 class SeaShipping(ShippingMethod):
     def __init__(self, width, length, height, weight, distance, shipping_type):
-        self.width = width
-        self.length = length
-        self.height = height
-        self.weight = weight
-        self.distance = distance
-        self.shipping_type = shipping_type
-
-    def calculate_cost(self):
-        cost_per_kilometer = 0.5
-        cost_per_kilogram = 2
-        cost_per_cubic_meter = 0.3
-        ratio = 2 if self.shipping_type == 'fast' else 1
-        return (self.distance * cost_per_kilometer + self.weight * cost_per_kilogram + self.width * self.length * self.height * cost_per_cubic_meter) * ratio
-
-    def calculate_time(self):
-        ratio = 0.5 if self.shipping_type == 'fast' else 1
-        # Швидкість руху км/год
-        speed = 450
-        return (self.distance / speed) * ratio
+        super().__init__(width, length, height, weight, distance, shipping_type)
+        self.speed = 450
+        self.cost_per_kilometer = 0.5
+        self.cost_per_kilogram = 2
+        self.cost_per_cubic_meter = 0.3
 
 class ShippingCalculatorFactory:
     def create_shipping_calculator(self, method, width, length, height, weight, distance, shipping_type):
